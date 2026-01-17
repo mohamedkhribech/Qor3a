@@ -5,6 +5,7 @@ import { verifyDraw } from '../lib/verify';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { Download, CheckCircle, AlertTriangle, Shield, Check } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function Results() {
     const { currentJamiya, currentDraw } = useJamiyaStore();
@@ -79,6 +80,32 @@ export default function Results() {
                         <CheckCircle className="ml-2 h-4 w-4" />
                         التحقق التقني
                     </Button>
+                </div>
+
+                {/* Navigation & Link */}
+                <div className="flex flex-col gap-4 mt-4">
+                    <div className="p-4 rounded-lg bg-white/5 border border-white/10 text-center">
+                        <p className="text-sm text-muted mb-2">رابط هذه القرعة (للمشاركة والحفظ):</p>
+                        <div className="flex items-center gap-2 p-2 bg-black/50 rounded font-mono text-xs select-all text-ellipsis overflow-hidden">
+                            {window.location.href}
+                        </div>
+                        <Button
+                            variant="ghost"
+                            className="mt-2 text-xs w-full py-1 h-auto"
+                            onClick={() => {
+                                navigator.clipboard.writeText(window.location.href);
+                                alert('تم نسخ الرابط!');
+                            }}
+                        >
+                            نسخ الرابط
+                        </Button>
+                    </div>
+
+                    <Link to="/" style={{ textDecoration: 'none' }}>
+                        <Button variant="outline" style={{ width: '100%' }}>
+                            العودة للصفحة الرئيسية
+                        </Button>
+                    </Link>
                 </div>
 
                 {/* Verification Expansion */}
