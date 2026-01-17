@@ -79,6 +79,29 @@ export default function CreateJamiya() {
 
                 </form>
             </Card>
+
+            <div className="max-w-2xl mx-auto mt-12 text-center text-muted text-sm space-y-6 animate-slide-up" style={{ opacity: 0.8 }}>
+                <div className="p-4 rounded-lg bg-white/5 border border-white/5">
+                    <h3 className="text-white font-bold text-lg mb-2">ما هو قُرعة؟</h3>
+                    <p>
+                        نظام ذكي وشاف لإدارة أدوار الجمعية الشهرية.
+                        نستخدم <strong>خوارزميات تشفير (SHA-256)</strong> لضمان أن الترتيب عشوائي تماماً ولا يمكن لأي شخص (حتى المطور) التلاعب به.
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <span className="block text-2xl mb-1">🛡️</span>
+                        <h4 className="text-white font-bold">غير قابل للتلاعب</h4>
+                        <p className="text-xs">يتم دمج التوقيت الزمني الدقيق مع بيانات الأعضاء لإنتاج "بذرة" (Seed) فريدة لكل سحب.</p>
+                    </div>
+                    <div>
+                        <span className="block text-2xl mb-1">🔍</span>
+                        <h4 className="text-white font-bold">قابل للتحقق</h4>
+                        <p className="text-xs">يمكن لأي عضو مراجعة العملية رياضياً والتأكد من صحتها عبر صفحة التحقق.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
