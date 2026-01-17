@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:server": "tsx watch server/index.ts",
-    "server": "tsx server/index.ts",
-    "build": "npm run build:client && npm run build:server",
+    "dev:server": "tsx watch api/index.ts",
+    "server": "tsx api/index.ts",
+    "build": "npm run build:client",
     "build:client": "tsc -b && vite build",
     "build:server": "tsc -p server/tsconfig.json",
     "start": "node dist-server/index.js",
