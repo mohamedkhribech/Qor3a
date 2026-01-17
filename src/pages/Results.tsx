@@ -118,11 +118,35 @@ export default function Results() {
                         <p className="text-sm text-green-400 mb-4">{verification.details}</p>
 
                         <div className="text-xs font-mono text-muted space-y-2" style={{ wordBreak: 'break-all' }}>
+                            <div className="p-2 bg-black/50 rounded flex justify-between items-center">
+                                <span>
+                                    <strong>ID:</strong> {currentJamiya.id || 'Local'}
+                                </span>
+                                <Button
+                                    variant="ghost"
+                                    className="h-6 px-2 text-[10px]"
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(currentJamiya.id || '');
+                                        alert('تم نسخ المعرف (ID)');
+                                    }}
+                                >
+                                    نسخ
+                                </Button>
+                            </div>
                             <div className="p-2 bg-black/50 rounded">
                                 <strong>SEED:</strong> {currentDraw.seed}
                             </div>
                             <div className="p-2 bg-black/50 rounded">
-                                <strong>Inputs Hash:</strong> {JSON.stringify(currentDraw.inputs)}
+                                <strong>Inputs Hash:</strong> {JSON.stringify(currentDraw.inputs).substring(0, 50)}...
+                            </div>
+
+                            <div className="mt-4 pt-4 border-t border-white/10 text-center">
+                                <Link to="/verify">
+                                    <Button variant="outline" className="w-full text-xs">
+                                        <Shield className="mr-2 h-3 w-3" />
+                                        الذهاب لصفحة التحقق المستقل
+                                    </Button>
+                                </Link>
                             </div>
                         </div>
                     </Card>

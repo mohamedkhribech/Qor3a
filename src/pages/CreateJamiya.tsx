@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Card } from '../components/ui/Card';
@@ -98,7 +98,12 @@ export default function CreateJamiya() {
                     <div>
                         <span className="block text-2xl mb-1">🔍</span>
                         <h4 className="text-white font-bold">قابل للتحقق</h4>
-                        <p className="text-xs">يمكن لأي عضو مراجعة العملية رياضياً والتأكد من صحتها عبر صفحة التحقق.</p>
+                        <p className="text-xs">
+                            يمكن لأي عضو مراجعة العملية رياضياً والتأكد من صحتها عبر
+                            <Link to="/verify" className="text-[var(--primary)] underline hover:text-white mr-1">
+                                صفحة التحقق
+                            </Link>.
+                        </p>
                     </div>
                 </div>
             </div>
