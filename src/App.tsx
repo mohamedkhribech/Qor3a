@@ -3,7 +3,6 @@ import CreateJamiya from './pages/CreateJamiya';
 import AddMembers from './pages/AddMembers';
 import GenerateDraw from './pages/GenerateDraw';
 import Results from './pages/Results';
-import Verify from './pages/Verify';
 
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
@@ -18,7 +17,6 @@ function App() {
           <Route path="/add-members" element={<AddMembers />} />
           <Route path="/generate" element={<GenerateDraw />} />
           <Route path="/results" element={<Results />} />
-          <Route path="/verify" element={<Verify />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>

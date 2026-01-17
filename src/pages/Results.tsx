@@ -86,29 +86,16 @@ export default function Results() {
                 {/* Navigation & Link */}
                 <div className="flex flex-col gap-4 mt-4">
                     <div className="p-4 rounded-lg bg-white/5 border border-white/10 text-center">
-                        <p className="text-sm text-muted mb-2">رابط هذه القرعة (للمشاركة والحفظ):</p>
-                        <div className="flex items-center gap-2 p-2 bg-black/50 rounded font-mono text-xs select-all text-ellipsis overflow-hidden">
-                            {window.location.href}
-                        </div>
-                        <Button
-                            variant="ghost"
-                            className="mt-2 text-xs w-full py-1 h-auto"
-                            onClick={() => {
-                                navigator.clipboard.writeText(window.location.href);
-                                alert('تم نسخ الرابط!');
-                            }}
-                        >
-                            نسخ الرابط
-                        </Button>
+                        <p className="text-sm text-muted mb-2">خيارات المشاركة:</p>
                         <Button
                             variant="secondary"
                             className="mt-2 text-xs w-full py-1 h-auto bg-[#25D366] hover:bg-[#128C7E] text-white border-none"
                             onClick={() => {
-                                const text = encodeURIComponent(`نتائج قرعة *${currentJamiya.name}* الرسمية 🎲\n\nاضغط هنا لرؤية الترتيب والتحقق من النزاهة: \n${window.location.href}`);
+                                const text = encodeURIComponent(`نتائج قرعة *${currentJamiya.name}* 🎲\n\nتم إجراء القرعة بنزاهة.`);
                                 window.open(`https://wa.me/?text=${text}`, '_blank');
                             }}
                         >
-                            مشاركة عبر واتساب (WhatsApp)
+                            مشاركة النتيجة عبر واتساب (WhatsApp)
                         </Button>
                     </div>
 
@@ -149,15 +136,6 @@ export default function Results() {
                             </div>
                             <div className="p-2 bg-black/50 rounded">
                                 <strong>Inputs Hash:</strong> {JSON.stringify(currentDraw.inputs).substring(0, 50)}...
-                            </div>
-
-                            <div className="mt-4 pt-4 border-t border-white/10 text-center">
-                                <Link to="/verify">
-                                    <Button variant="outline" className="w-full text-xs">
-                                        <Shield className="mr-2 h-3 w-3" />
-                                        الذهاب لصفحة التحقق المستقل
-                                    </Button>
-                                </Link>
                             </div>
                         </div>
                     </Card>
