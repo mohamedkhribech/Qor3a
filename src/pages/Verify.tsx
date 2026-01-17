@@ -22,7 +22,8 @@ export default function Verify() {
 
         try {
             // Fetch draw data from API
-            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/jam3iya/${id}/draw`);
+            const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3001' : '');
+            const response = await fetch(`${apiUrl}/api/jam3iya/${id}/draw`);
 
             if (!response.ok) {
                 if (response.status === 404) throw new Error('لم يتم العثور على قرعة بهذا المعرف.');

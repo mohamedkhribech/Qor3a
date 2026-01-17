@@ -29,36 +29,105 @@ export default function GenerateDraw() {
 
     const handleGenerate = async () => {
         setIsGenerating(true);
-
-        // Simulate "Processing" / Network delay for effect
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
-        // 1. Prepare Inputs
-        const timestamp = Date.now(); // Freezing time 
-        // Plan said "Salt in CreateJamiya". 
-        // I didn't save salt in `CreateJamiya.tsx` to store!
-        // I should fix that. Or ask for salt here if missing. 
-        // Let's assume empty salt or ask here if I missed it.
-        // Actually, asking here is good for "Commitment".
-        // I'll use a fixed salt for now or add input.
-        // Let's add Salt input here if we want "User Interaction". 
-        // But Plan said it's in Create.
-        // I'll add a "Salt" input here as confirmation/finalization.
-
         const inputSalt = (document.getElementById('salt-input') as HTMLInputElement)?.value || '';
+        const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3001' : '');
 
+        try {
+            // 1. Sync Jam3iya to Server (Create Record)
+            const jamResponse = await fetch(`${apiUrl}/api/jam3iya`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: currentJamiya.name,
+                    amount: currentJamiya.amount,
+                    startDate: currentJamiya.startDate,
+                    members: currentJamiya.members.map(m => m.name) // Server creates new IDs for members
+                })
+            });
+
+            if (!jamResponse.ok) {
+                console.error('Failed to sync Jam3iya to server');
+                // Fallback to local generation if server fails? 
+                // For now, let's throw to alert user, or fallback silently?
+                // Throwing is safer for "Transparency" -> User knows something is wrong.
+                throw new Error('فشل الاتصال بالسيرفر. يرجى التحقق من الإنترنت.');
+            }
+
+            const jamData = await jamResponse.json();
+            const serverId = jamData.id;
+
+            // 2. Generate Draw on Server (Source of Truth)
+            const drawResponse = await fetch(`${apiUrl}/api/jam3iya/${serverId}/draw`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    salt: inputSalt,
+                    externalEvent: externalEvent || undefined
+                })
+            });
+
+            if (!drawResponse.ok) {
+                throw new Error('فشل توليد القرعة على السيرفر.');
+            }
+
+            const drawData = await drawResponse.json();
+
+            // 3. Update Local Store with Server Data (Critical: Update ID and Results)
+            // We need to map server results to our store format
+            // Server returns: results: [{ memberId, memberName, score, month }]
+            // Our store expects local Member IDs? 
+            // Wait, server created NEW Member IDs.
+            // So we must update our local currentJamiya members to match server IDs.
+
+            // Re-construct members from server response or use what we have?
+            // Technically, we should replace local jamiya with server jamiya.
+
+            // Let's update Store:
+            // Update Jamiya ID
+            useJamiyaStore.getState().updateJamiyaParts({ id: serverId }); // Use getState to avoid closure staleness if needed, but setDraw handles it.
+            // Actually, we should update the whole object ideally.
+            // But let's just proceed with Draw Data which contains everything relevant for Results.
+
+            // The Results page displays names. DrawData has names.
+
+            setDraw({
+                id: drawData.id,
+                jamiyaId: serverId,
+                seed: drawData.seed,
+                inputs: drawData.inputs,
+                results: drawData.results, // These have server memberIds.
+                createdAt: drawData.createdAt,
+                isLocked: true
+            });
+
+            // Also update the currentJamiya ID primarily so Verify link works
+            useJamiyaStore.getState().updateJamiyaParts({ id: serverId });
+
+            navigate('/results');
+
+        } catch (error) {
+            console.error(error);
+            alert('حدث خطأ أثناء الاتصال بالسيرفر. سيتم التوليد محلياً (لن يعمل التحقق عبر الإنترنت).');
+
+            // Fallback: Local Generation (Legacy Logic)
+            await fallbackLocalGenerate(inputSalt);
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
+    const fallbackLocalGenerate = async (salt: string) => {
+        const timestamp = Date.now();
         const inputs: SeedInputs = {
             members: currentJamiya.members.map(m => m.id),
             timestamp,
-            salt: inputSalt,
+            salt,
             externalEvent: externalEvent || undefined
         };
 
-        // 2. Generate
         const seed = generateSeed(inputs);
         const rankedMembers = generateFairOrder(seed, inputs.members);
 
-        // 3. Save Result
         const results = rankedMembers.map((r, i) => {
             const member = currentJamiya.members.find(m => m.id === r.memberId);
             return {
