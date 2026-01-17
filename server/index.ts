@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import { pool } from './db';
-import jam3iyaRoutes from './routes/jam3iya';
+import { pool } from './db/index.js';
+import jam3iyaRoutes from './routes/jam3iya.js';
 import path from 'path';
 
 const PORT = process.env.PORT || 3001;
