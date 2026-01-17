@@ -22,7 +22,8 @@ export default function Results() {
             date: new Date(currentDraw.createdAt).toLocaleDateString(),
             seed: currentDraw.seed,
             inputs: currentDraw.inputs,
-            results: currentDraw.results
+            results: currentDraw.results,
+            id: currentJamiya.id // Pass ID to PDF
         });
     };
 

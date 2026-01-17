@@ -9,6 +9,7 @@ interface PdfData {
     seed: string;
     inputs: SeedInputs;
     results: Array<{ month: number; memberName: string; score: string }>;
+    id?: string; // Optional for backward compatibility, but highly recommended
 }
 
 export function generatePdf(data: PdfData) {
@@ -28,9 +29,16 @@ export function generatePdf(data: PdfData) {
         doc.setTextColor(0, 0, 0);
         doc.text(`Name: ${data.jam3iyaName}`, 105, 32, { align: 'center' });
 
+        // Subheader with ID
+        doc.setFontSize(10);
+        doc.setTextColor(150, 150, 150);
+        if (data.id) {
+            doc.text(`ID: ${data.id}`, 105, 38, { align: 'center' });
+        }
+
         doc.setFontSize(11);
         doc.setTextColor(100, 100, 100);
-        doc.text(`Amount: ${data.amount} | Date: ${data.date}`, 105, 40, { align: 'center' });
+        doc.text(`Amount: ${data.amount} | Date: ${data.date}`, 105, 45, { align: 'center' });
 
         // Results Table
         const tableData = data.results.map(r => [
@@ -40,7 +48,7 @@ export function generatePdf(data: PdfData) {
         ]);
 
         autoTable(doc, {
-            startY: 55,
+            startY: 60,
             head: [['Month', 'Member', 'Score (Hash)']],
             body: tableData,
             theme: 'striped',
@@ -70,12 +78,23 @@ export function generatePdf(data: PdfData) {
         doc.setTextColor(80, 80, 80);
 
         const verifyY = finalY + 22;
-        doc.text(`SEED: ${data.seed}`, 14, verifyY);
-        doc.text(`Salt: ${data.inputs.salt || '(none)'}`, 14, verifyY + 5);
-        doc.text(`Timestamp: ${data.inputs.timestamp}`, 14, verifyY + 10);
+        if (data.id) {
+            doc.text(`Jam3iya ID: ${data.id}`, 14, verifyY);
+            doc.text(`SEED: ${data.seed}`, 14, verifyY + 5);
+            doc.text(`Salt: ${data.inputs.salt || '(none)'}`, 14, verifyY + 10);
+            doc.text(`Timestamp: ${data.inputs.timestamp}`, 14, verifyY + 15);
 
-        if (data.inputs.externalEvent) {
-            doc.text(`External Event: ${data.inputs.externalEvent}`, 14, verifyY + 15);
+            if (data.inputs.externalEvent) {
+                doc.text(`External Event: ${data.inputs.externalEvent}`, 14, verifyY + 20);
+            }
+        } else {
+            doc.text(`SEED: ${data.seed}`, 14, verifyY);
+            doc.text(`Salt: ${data.inputs.salt || '(none)'}`, 14, verifyY + 5);
+            doc.text(`Timestamp: ${data.inputs.timestamp}`, 14, verifyY + 10);
+
+            if (data.inputs.externalEvent) {
+                doc.text(`External Event: ${data.inputs.externalEvent}`, 14, verifyY + 15);
+            }
         }
 
         // Footer
