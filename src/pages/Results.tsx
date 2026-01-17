@@ -100,6 +100,16 @@ export default function Results() {
                         >
                             نسخ الرابط
                         </Button>
+                        <Button
+                            variant="secondary"
+                            className="mt-2 text-xs w-full py-1 h-auto bg-[#25D366] hover:bg-[#128C7E] text-white border-none"
+                            onClick={() => {
+                                const text = encodeURIComponent(`نتائج قرعة *${currentJamiya.name}* الرسمية 🎲\n\nاضغط هنا لرؤية الترتيب والتحقق من النزاهة: \n${window.location.href}`);
+                                window.open(`https://wa.me/?text=${text}`, '_blank');
+                            }}
+                        >
+                            مشاركة عبر واتساب (WhatsApp)
+                        </Button>
                     </div>
 
                     <Link to="/" style={{ textDecoration: 'none' }}>
