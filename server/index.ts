@@ -1,27 +1,12 @@
 import express from 'express';
 import cors from 'cors';
-import { Pool } from 'pg';
-import dotenv from 'dotenv';
+import { pool } from './db';
 import jam3iyaRoutes from './routes/jam3iya';
+import path from 'path';
 
-// Load environment variables
-dotenv.config();
-
-// Environment variables
 const PORT = process.env.PORT || 3001;
-const DATABASE_URL = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/qor3a';
 
 const app = express();
-
-// Database pool
-export const pool = new Pool({
-    connectionString: DATABASE_URL,
-});
-
-// Test database connection
-pool.connect()
-    .then(() => console.log('✅ Connected to PostgreSQL'))
-    .catch((err) => console.error('❌ Database connection error:', err.message));
 
 // Middleware
 app.use(cors({
@@ -31,15 +16,19 @@ app.use(cors({
 app.use(express.json());
 
 // Health check
-app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+app.get('/api/health', async (req, res) => {
+    try {
+        await pool.query('SELECT 1');
+        res.json({ status: 'ok', db: 'connected', timestamp: new Date().toISOString() });
+    } catch (error: any) {
+        res.status(500).json({ status: 'error', db: error.message });
+    }
 });
 
 // API Routes
 app.use('/api/jam3iya', jam3iyaRoutes);
 
 // Serve Frontend (Production)
-import path from 'path';
 const distPath = path.join(process.cwd(), 'dist');
 
 // Serve static files
@@ -52,10 +41,12 @@ app.get('*', (req, res, next) => {
     // Check if index.html exists (to avoid errors in dev if dist is empty)
     res.sendFile(path.join(distPath, 'index.html'), (err) => {
         if (err && !res.headersSent) {
-            // If dist doesn't exist (e.g. in dev mode), we just 404 or ignore
-            // In dev mode, Vite handles frontend, so this might not be hit if we use port 5173 
-            // but if we use port 3001 directly, this shows the frontend.
-            res.status(404).send('Frontend not built. Run "npm run build" first.');
+            // In dev mode, or if not built
+            if (process.env.NODE_ENV === 'production') {
+                res.status(404).send('Frontend not built. Run "npm run build" first.');
+            } else {
+                res.status(404).json({ error: 'Frontend not found (Dev Mode)' });
+            }
         }
     });
 });
@@ -68,16 +59,12 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
     }
 });
 
-// Start server if not running in Vercel (Vercel exports the app)
-if (process.env.NODE_ENV !== 'production') {
+// Start server if NOT in Vercel Serverless environment
+// Vercel sets 'VERCEL=1' automatically. 
+// We want to listen in local dev AND local production (npm start).
+if (!process.env.VERCEL) {
     app.listen(PORT, () => {
         console.log(`🚀 Server running on http://localhost:${PORT}`);
-        console.log(`📡 API endpoints:`);
-        console.log(`   - GET  /api/health`);
-        console.log(`   - POST /api/jam3iya`);
-        console.log(`   - GET  /api/jam3iya/:id`);
-        console.log(`   - POST /api/jam3iya/:id/draw`);
-        console.log(`   - GET  /api/jam3iya/:id/draw`);
     });
 }
 
