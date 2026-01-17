@@ -1,73 +1,52 @@
-# React + TypeScript + Vite
+# Qor3a (قُرعة) 🎲
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**نظام القرعة العادلة والشفافة**
 
-Currently, two official plugins are available:
+تطبيق ويب تقدمي (PWA) يهدف لإدارة جمعيات الادخار والأدوار الشهرية بأعلى معايير النزاهة والشفافية باستخدام التشفير الرقمي.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🌟 المميزات
 
-## React Compiler
+- **🛡️ غير قابل للتلاعب:** نستخدم خوارزميات `SHA-256` لدمج الوقت الحالي مع بيانات الأعضاء لإنتاج ترتيب عشوائي حقيقي ومحفوظ.
+- **🔍 قابل للتحقق:** صفحة تحقق مستقلة تمكن أي عضو من مراجعة النتائج رياضياً والتأكد من صحتها.
+- **📱 يعمل كتطبيق (PWA):** يمكن تثبيته على الهواتف (Android/iOS) والعمل دون اتصال بالإنترنت (للمزايا الأساسية).
+- **📄 تقارير PDF:** تصدير النتائج بملف PDF يحتوي على كافة تفاصيل القرعة ومعرفات التحقق.
+- **☁️ تخزين سحابي:** حفظ البيانات والنتائج في قاعدة بيانات آمنة للرجوع إليها دائماً.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ التقنيات المستخدمة
 
-## Expanding the ESLint configuration
+- **الواجهة الأمامية:** React, TypeScript, Vite, Tailwind CSS.
+- **الواجهة الخلفية:** Node.js (Express), Serverless Functions (Vercel).
+- **قاعدة البيانات:** PostgreSQL (Neon.tech).
+- **التشفير:** Native Web Crypto API (SHA-256).
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🚀 طريقة الاستخدام
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+1. **أنشئ جمعية:** أدخل الاسم، المبلغ، وتاريخ البداية.
+2. **أضف الأعضاء:** أدخل أسماء المشاركين (يمكن إضافة الصور).
+3. **أنشئ القرعة:** سيقوم النظام بتوليد ترتيب عشوائي بناءً على "بذرة" (Seed) مشفرة.
+4. **شارك النتائج:** أرسل الرابط أو ملف PDF للأعضاء.
+5. **تحقق:** استخدم الـ `ID` أو ملف الـ PDF للتأكد من نزاهة القرعة في صفحة التحقق.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 🏗️ التشغيل محلياً
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# تثبيت المكتبات
+npm install
+
+# تشغيل السيرفر (Backend)
+npm run build:server
+npm run start
+
+# تشغيل الواجهة (Frontend)
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🔒 التحقق التقني
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+يعتمد النظام على مبدأ **Deterministic RNG**.
+- **المدخلات:** قائمة الأعضاء + الطابع الزمني (Timestamp).
+- **العملية:** `Hash(Members + Timestamp) = Seed` -> `RNG(Seed) = Shuffled Order`.
+- **النتيجة:** أي شخص يملك نفس المدخلات (الموجودة في صفحة النتائج) سيحصل *دائماً* على نفس الترتيب، مما يثبت عدم وجود تلاعب يدوي.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
+**تم التطوير بواسطة Khribech**
