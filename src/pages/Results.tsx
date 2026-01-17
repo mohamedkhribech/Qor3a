@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useJamiyaStore } from '../store/jamiyaStore';
-import { generatePdf } from '../lib/pdf';
+import { generatePdf, sharePdf } from '../lib/pdf';
 import { verifyDraw } from '../lib/verify';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
-import { Download, CheckCircle, AlertTriangle, Shield, Check } from 'lucide-react';
+import { Download, CheckCircle, AlertTriangle, Shield, Check, Share2, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Results() {
@@ -23,7 +23,19 @@ export default function Results() {
             seed: currentDraw.seed,
             inputs: currentDraw.inputs,
             results: currentDraw.results,
-            id: currentJamiya.id // Pass ID to PDF
+            id: currentJamiya.id
+        });
+    };
+
+    const handleShareFile = () => {
+        sharePdf({
+            jam3iyaName: currentJamiya.name,
+            amount: currentJamiya.amount,
+            date: new Date(currentDraw.createdAt).toLocaleDateString(),
+            seed: currentDraw.seed,
+            inputs: currentDraw.inputs,
+            results: currentDraw.results,
+            id: currentJamiya.id
         });
     };
 
@@ -89,13 +101,23 @@ export default function Results() {
                         <p className="text-sm text-muted mb-2">خيارات المشاركة:</p>
                         <Button
                             variant="secondary"
-                            className="mt-2 text-xs w-full py-1 h-auto bg-[#25D366] hover:bg-[#128C7E] text-white border-none"
+                            className="mt-2 text-xs w-full py-1 h-auto bg-blue-600 hover:bg-blue-700 text-white border-none flex items-center justify-center gap-2"
+                            onClick={handleShareFile}
+                        >
+                            <FileText size={14} />
+                            مشاركة ملف PDF مباشرة
+                        </Button>
+
+                        <Button
+                            variant="secondary"
+                            className="mt-2 text-xs w-full py-1 h-auto bg-[#25D366] hover:bg-[#128C7E] text-white border-none flex items-center justify-center gap-2"
                             onClick={() => {
                                 const text = encodeURIComponent(`نتائج قرعة *${currentJamiya.name}* 🎲\n\nتم إجراء القرعة بنزاهة.`);
                                 window.open(`https://wa.me/?text=${text}`, '_blank');
                             }}
                         >
-                            مشاركة النتيجة عبر واتساب (WhatsApp)
+                            <Share2 size={14} />
+                            مشاركة النتيجة كـ نص (WhatsApp)
                         </Button>
                     </div>
 
