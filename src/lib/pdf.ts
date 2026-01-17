@@ -146,16 +146,19 @@ export async function sharePdf(data: PdfData) {
         if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({
                 files: [file],
-                title: 'نتيجة القرعة',
-                text: `نتائج قرعة ${data.jam3iyaName}`
+                title: 'نتيجة القرعة'
+                // Note: Removing 'text' property fixes WhatsApp file attachment issue on Android
             });
             return true;
         } else {
-            alert('متصفحك لا يدعم مشاركة الملفات مباشرة. يرجى تحميل الملف ثم إرساله.');
-            return false;
+            // Fallback to download if sharing not supported
+            generatePdf(data);
+            return true;
         }
     } catch (error) {
-        console.error('Error sharing PDF:', error);
+        console.warn('Share API failed, falling back to download:', error);
+        // Fallback to download if sharing fails explicitly (e.g. user cancellation or system error)
+        generatePdf(data);
         return false;
     }
 }
