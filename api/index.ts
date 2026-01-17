@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import { pool } from './db/index.js';
-import jam3iyaRoutes from './routes/jam3iya.js';
+import { pool } from './db/index';
+import jam3iyaRoutes from './routes/jam3iya';
 import path from 'path';
 
 const PORT = process.env.PORT || 3001;
@@ -35,13 +35,11 @@ const distPath = path.join(process.cwd(), 'dist');
 app.use(express.static(distPath));
 
 // SPA Fallback - must be after API routes
-app.get('*', (req, res, next) => {
-    if (req.url.startsWith('/api')) return next();
-
-    // Check if index.html exists (to avoid errors in dev if dist is empty)
+// Fix for Express 5: Use Regex instead of '*'
+app.get(/^(?!\/api).+/, (req, res, next) => {
+    // Check if index.html exists
     res.sendFile(path.join(distPath, 'index.html'), (err) => {
         if (err && !res.headersSent) {
-            // In dev mode, or if not built
             if (process.env.NODE_ENV === 'production') {
                 res.status(404).send('Frontend not built. Run "npm run build" first.');
             } else {
