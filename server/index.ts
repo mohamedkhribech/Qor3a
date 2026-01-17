@@ -68,13 +68,17 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
     }
 });
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-    console.log(`📡 API endpoints:`);
-    console.log(`   - GET  /api/health`);
-    console.log(`   - POST /api/jam3iya`);
-    console.log(`   - GET  /api/jam3iya/:id`);
-    console.log(`   - POST /api/jam3iya/:id/draw`);
-    console.log(`   - GET  /api/jam3iya/:id/draw`);
-});
+// Start server if not running in Vercel (Vercel exports the app)
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`🚀 Server running on http://localhost:${PORT}`);
+        console.log(`📡 API endpoints:`);
+        console.log(`   - GET  /api/health`);
+        console.log(`   - POST /api/jam3iya`);
+        console.log(`   - GET  /api/jam3iya/:id`);
+        console.log(`   - POST /api/jam3iya/:id/draw`);
+        console.log(`   - GET  /api/jam3iya/:id/draw`);
+    });
+}
+
+export default app;
